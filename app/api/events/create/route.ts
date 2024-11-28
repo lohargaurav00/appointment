@@ -1,27 +1,34 @@
-import prisma from "@/lib/prisma";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
+import moment from "moment";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+import prisma from "@/lib/prisma";
+
+export async function POST(req: NextRequest) {
   try {
-    if (req.method === "POST") {
-      const { start, end, title } = req.body;
-      const event = await prisma.events.create({
-        data: {
-          start,
-          end,
-          title,
-        },
-      });
-      return res.status(200).json(event);
-    } else {
-      res.setHeader("Allow", ["POST"]);
-      return res.status(405).end(`Method ${req.method} Not Allowed`);
+    const body = await req.json();
+    const { start, end, title } = body;
+
+    if (!start || !end || !title) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
     }
+
+    const event = await prisma.events.create({
+      data: {
+        start: moment(start).toDate(),
+        end: moment(end).toDate(),
+        title,
+      },
+    });
+
+    return NextResponse.json(event, { status: 201 });
   } catch (error) {
     console.error("Error creating event:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

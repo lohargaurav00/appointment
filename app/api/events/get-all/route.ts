@@ -1,20 +1,17 @@
-import prisma from "@/lib/prisma";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+import prisma from "@/lib/prisma";
+
+export async function GET() {
   try {
-    if (req.method === "GET") {
-      const events = await prisma.events.findMany();
-      return res.status(200).json(events);
-    } else {
-      res.setHeader("Allow", ["GET"]);
-      return res.status(405).end(`Method ${req.method} Not Allowed`);
-    }
-  } catch (error) {
-    console.error("Error fetching events:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    const events = await prisma.events.findMany();
+
+    return NextResponse.json(events, { status: 200 });
+  } catch (error: any) {
+    console.error("Error fetching events:", error?.message);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
