@@ -106,10 +106,13 @@ const Home = () => {
   );
 
   return (
-    <div className="flex h-full w-full p-3 relative">
+    <div className="flex h-full w-full p-3 relative flex-col gap-1">
+      <div className="text-xs text-muted-foreground capitalize self-end">
+        Note : To Create appointment click on Add icon
+      </div>
       <PlusCircleIcon
         onClick={() => setManageEvent(true)}
-        className="absolute top-[17px] right-80 cursor-pointer text-primary hover:text-gray-500 duration-300"
+        className="absolute top-9 right-80 cursor-pointer text-primary hover:text-gray-500 duration-300"
       />
       <Calendar
         events={events}
