@@ -7,8 +7,10 @@ export async function GET() {
     const events = await prisma.events.findMany();
 
     return NextResponse.json(events, { status: 200 });
-  } catch (error: any) {
-    console.error("Error fetching events:", error?.message);
+  } catch (error: unknown) {
+    let message = "Unknown Error";
+    if (error instanceof Error) message = error.message;
+    console.error("Error fetching events:", message);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

@@ -25,8 +25,10 @@ export async function PUT(req: NextRequest) {
     });
 
     return NextResponse.json(updatedEvent, { status: 200 });
-  } catch (error: any) {
-    console.error("Error updating event:", error?.message);
+  } catch (error: unknown) {
+    let message = "Unknown Error";
+    if (error instanceof Error) message = error.message;
+    console.error("Error updating event:", message);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
